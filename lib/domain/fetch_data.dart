@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 class FetchCourse {
   Future<List<Course>?> getCourse() async {
     const String url = 'http://cahomeworkapi.pythonanywhere.com/courses/';
+    const String url2 = '/courses/';
     Uri uri = Uri.parse(url);
     var response = await http.get(
       uri,
@@ -37,7 +38,6 @@ class FetchCourse {
       print(jsonResponse);
       List<GroupModel> list =
           jsonResponse.map((job) => GroupModel.fromJson(job)).toList();
-
       return list;
     }
     return null;

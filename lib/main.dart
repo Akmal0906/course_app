@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
             builder: (context, state) {
               return GroupScreen(
                 id: state.pathParameters["id"] ?? '',
-                groupName: state.pathParameters['groupName']??'',
+                groupName: state.pathParameters['groupName'] ?? '',
               );
             },
           ),
@@ -79,11 +79,8 @@ class MyApp extends StatelessWidget {
             name: 'CurrentUser',
             builder: (context, state) {
               Result result = state.extra as Result; // -> casting is important
-
-              return  CurrentUserResult(
-                result:  result,
-
-
+              return CurrentUserResult(
+                result: result,
               );
             },
           ),

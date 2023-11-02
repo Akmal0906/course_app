@@ -24,8 +24,11 @@ class _AllHomeWorkScreenState extends State<AllHomeWorkScreen> {
         .getAllWork(groupId: widget.groupId, courseId: widget.courseId);
   }
 
-  Future _refresh() async {
-    //context.watch<CourseProvider>().getGroupInfo(widget.id);
+  Future _refresh(BuildContext context) async {
+    Provider.of<AllWorkProvider>(context, listen: false)
+        .getAllWork(courseId: widget.courseId, groupId: widget.groupId);
+    setState(() {});
+    print('Refresh working');
   }
 
   @override
@@ -55,17 +58,27 @@ class _AllHomeWorkScreenState extends State<AllHomeWorkScreen> {
                 fontSize: 30),
           ),
         ),
-        body: RefreshIndicator(
-          onRefresh: _refresh,
-          child: Consumer<AllWorkProvider>(
-            builder: (BuildContext context, value, Widget? child) {
-              print('COUNT ${value.allhomeworkModel.length}');
-              if (value.isLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (value.allhomeworkModel.isNotEmpty) {
-                return ListView.builder(
+        body: Consumer<AllWorkProvider>(
+          builder: (BuildContext context, value, Widget? child) {
+            print('COUNT ${value.allhomeworkModel.length}');
+            if (value.isLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (value.error.isNotEmpty) {
+              return RefreshIndicator(
+                onRefresh: () async {
+                  _refresh(context);
+                  print("sdfs");
+                },
+                child: Center(
+                  child: Text(value.error),
+                ),
+              );
+            } else if (value.allhomeworkModel.isNotEmpty) {
+              return RefreshIndicator(
+                onRefresh: () async => _refresh(context),
+                child: ListView.builder(
                   itemCount: value.allhomeworkModel.length,
                   itemBuilder: (context, index) {
                     return GestureDetector(
@@ -101,7 +114,9 @@ class _AllHomeWorkScreenState extends State<AllHomeWorkScreen> {
                               child: Text(
                                 value.allhomeworkModel[index].group!.name!,
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.w700, fontSize: 32,color: Colors.white),
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 32,
+                                    color: Colors.white),
                               ),
                             ),
                             Padding(
@@ -109,7 +124,9 @@ class _AllHomeWorkScreenState extends State<AllHomeWorkScreen> {
                               child: Text(
                                 value.allhomeworkModel[index].assignment!.name!,
                                 style: const TextStyle(
-                                    fontSize: 24, fontWeight: FontWeight.w500,color: Color(0xff201F25)),
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xff201F25)),
                               ),
                             ),
                           ],
@@ -117,17 +134,17 @@ class _AllHomeWorkScreenState extends State<AllHomeWorkScreen> {
                       ),
                     );
                   },
-                );
-              }else if(value.allhomeworkModel.isEmpty){
-                return const Center(
-                  child: Text('Do not exist data'),
-                );
-              }
-              return const Center(
-                child: Text('SomeThing Went Wrong'),
+                ),
               );
-            },
-          ),
+            } else if (value.allhomeworkModel.isEmpty) {
+              return const Center(
+                child: Text('Do not exist data'),
+              );
+            }
+            return const Center(
+              child: Text('SomeThing Went Wrong'),
+            );
+          },
         ),
       ),
     );

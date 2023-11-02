@@ -1,9 +1,6 @@
-import 'package:course_app/domain/models/course_model.dart';
-import 'package:course_app/presantation/view/all_homework_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
 import '../providers/course_provider.dart';
 
 class GroupScreen extends StatefulWidget {
@@ -61,11 +58,15 @@ class _GroupScreenState extends State<GroupScreen> {
           onRefresh: _refresh,
           child: Consumer<CourseProvider>(
             builder: (BuildContext context, value, Widget? child) {
-              if (value.groupModel.isEmpty) {
+              if (value.isLoading) {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
-              } else {
+              } else if (value.error.isNotEmpty) {
+                return Center(
+                  child: Text(value.error),
+                );
+              } else if (value.groupModel.isNotEmpty) {
                 return ListView.builder(
                   itemCount: value.userModel.length,
                   itemBuilder: (context, index) {
@@ -101,15 +102,13 @@ class _GroupScreenState extends State<GroupScreen> {
                     );
                   },
                 );
+              } else {
+                return const Center(
+                  child: Text('Something went wrong'),
+                );
               }
             },
           ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.refresh),
-          onPressed: () {
-            Provider.of<CourseProvider>(context).getGroupInfo(widget.id);
-          },
         ),
       ),
     );
