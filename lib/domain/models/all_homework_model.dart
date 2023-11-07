@@ -47,3 +47,4 @@ class Assignment {
     "name": name,
   };
 }
+

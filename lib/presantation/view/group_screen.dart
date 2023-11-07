@@ -17,12 +17,11 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   void initState() {
     super.initState();
-    print('GRUOP SCREEN INIT STATE WORKING');
     Provider.of<CourseProvider>(context, listen: false).getGroupInfo(widget.id);
   }
 
-  Future _refresh() async {
-    context.watch<CourseProvider>().getGroupInfo(widget.id);
+  Future _refresh(BuildContext context) async {
+    Provider.of<CourseProvider>(context, listen: false).getGroupInfo(widget.id);
   }
 
   @override
@@ -55,59 +54,67 @@ class _GroupScreenState extends State<GroupScreen> {
           ),
         ),
         body: RefreshIndicator(
-          onRefresh: _refresh,
-          child: Consumer<CourseProvider>(
-            builder: (BuildContext context, value, Widget? child) {
-              if (value.isLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (value.error.isNotEmpty) {
-                return Center(
-                  child: Text(value.error),
-                );
-              } else if (value.groupModel.isNotEmpty) {
-                return ListView.builder(
-                  itemCount: value.userModel.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      width: double.infinity,
-                      margin: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: const [
-                            BoxShadow(
-                                blurRadius: 2,
-                                color: Colors.black38,
-                                offset: Offset(0, 4))
-                          ]),
-                      child: ListTile(
-                        title: Center(
-                            child: Text(
-                          value.groupModel[index].name,
-                          style: const TextStyle(color: Color(0xff685967)),
-                        )),
-                        leading: Text('${index + 1}'),
-                        leadingAndTrailingTextStyle: const TextStyle(
-                            fontSize: 18, color: Color(0xff685967)),
-                        onTap: () {
-                          GoRouter.of(context).pushNamed('AllWork',
-                              pathParameters: {
-                                'courseId': widget.id,
-                                'groupId': value.groupModel[index].id.toString()
-                              });
-                        },
-                      ),
-                    );
-                  },
-                );
-              } else {
-                return const Center(
-                  child: Text('Something went wrong'),
-                );
-              }
-            },
+          onRefresh: ()async=>_refresh(context),
+          child: CustomScrollView(
+            slivers:[ Consumer<CourseProvider>(
+              builder: (BuildContext context, value, Widget? child) {
+                if (value.isLoading) {
+                  return SliverToBoxAdapter(
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                } else if (value.error.isNotEmpty) {
+                  return SliverToBoxAdapter(
+                    child: Center(
+                      child: Text('Please try reloading the page'),
+                    ),
+                  );
+                } else if (value.groupModel.isNotEmpty) {
+                  return SliverList.builder(
+                    itemCount: value.userModel.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: const [
+                              BoxShadow(
+                                  blurRadius: 2,
+                                  color: Colors.black38,
+                                  offset: Offset(0, 4))
+                            ]),
+                        child: ListTile(
+                          title: Center(
+                              child: Text(
+                            value.groupModel[index].name,
+                            style: const TextStyle(color: Color(0xff685967)),
+                          )),
+                          leading: Text('${index + 1}'),
+                          leadingAndTrailingTextStyle: const TextStyle(
+                              fontSize: 18, color: Color(0xff685967)),
+                          onTap: () {
+                            GoRouter.of(context).pushNamed('AllWork',
+                                pathParameters: {
+                                  'courseId': widget.id,
+                                  'groupId': value.groupModel[index].id.toString()
+                                });
+                          },
+                        ),
+                      );
+                    },
+                  );
+                } else {
+                  return SliverToBoxAdapter(
+                    child: const Center(
+                      child: Text('Something went wrong'),
+                    ),
+                  );
+                }
+              },
+            ),]
           ),
         ),
       ),

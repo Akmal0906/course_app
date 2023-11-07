@@ -1,7 +1,6 @@
 import 'package:course_app/domain/models/result_group_model.dart';
 import 'package:course_app/presantation/providers/course_provider.dart';
 import 'package:course_app/presantation/view/all_homework_screen.dart';
-import 'package:course_app/presantation/view/current_user_result.dart';
 import 'package:course_app/presantation/view/group_screen.dart';
 import 'package:course_app/presantation/view/course_list_screen.dart';
 import 'package:course_app/presantation/view/result_by_group_screen.dart';
@@ -74,16 +73,7 @@ class MyApp extends StatelessWidget {
               );
             },
           ),
-          GoRoute(
-            path: "CurrentUser",
-            name: 'CurrentUser',
-            builder: (context, state) {
-              Result result = state.extra as Result; // -> casting is important
-              return CurrentUserResult(
-                result: result,
-              );
-            },
-          ),
+
         ],
       ),
     ],

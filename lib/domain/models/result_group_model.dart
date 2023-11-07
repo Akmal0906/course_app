@@ -6,8 +6,9 @@ class Result {
   final String? github;
   final List<Task>? tasks;
    int? count;
+   double? percent;
 
-  Result({this.firstName, this.lastName, this.github, this.tasks, this.count});
+  Result({this.firstName, this.lastName, this.github, this.tasks, this.count,this.percent});
 
   factory Result.fromRawJson(String str) => Result.fromJson(json.decode(str));
 
@@ -18,6 +19,7 @@ class Result {
         lastName: json["last_name"],
         github: json["github"],
         count: json["count"],
+        percent: json["percent"],
         tasks: json["tasks"] == null
             ? []
             : List<Task>.from(json["tasks"]!.map((x) => Task.fromJson(x))),
@@ -28,7 +30,9 @@ class Result {
         "last_name": lastName,
         "github": github,
         "count": count,
-        "tasks": tasks == null
+        "percent": percent,
+
+    "tasks": tasks == null
             ? []
             : List<dynamic>.from(tasks!.map((x) => x.toJson())),
       };

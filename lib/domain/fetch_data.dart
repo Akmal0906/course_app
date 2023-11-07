@@ -76,18 +76,22 @@ class FetchCourse {
       if (list.length > 1) {
         for (int i = 0; i < list.length; i++) {
           int count1 = 0;
+          int attemp=0;
 
           for (int j = 0; j < list[i].tasks!.length; j++) {
+            attemp+=list[i].tasks![j].attempts!;
             if (list[i].tasks?[j].isCorrect == true) {
               count1++;
             }
           }
-
           list[i].count = count1;
+          list[i].percent=attemp==0?0:count1/attemp;
           count1 = 0;
+          attemp=0;
         }
 
-        list.sort((a, b) => a.count!.compareTo(b.count as num));
+        list.sort((a, b) => a.percent!.compareTo(b.count as num));
+        print('SORT LIST==${list.map((e) => e.toJson()).toList()}');
 
         return list.reversed.toList();
       } else {

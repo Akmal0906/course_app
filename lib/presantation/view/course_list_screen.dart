@@ -17,39 +17,43 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    print('HOME SCREEN INIT STATE WORKING');
     Provider.of<CourseProvider>(context, listen: false).getAllCourse();
+  }
+
+  Future _refresh(BuildContext context) async {
+    Provider.of<CourseProvider>(context, listen: false).getAllCourse();
+    setState(() {
+
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    print('HOME SCREEN WIDGET WORKING');
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color(0xffe9e9e9),
-        body: Consumer<CourseProvider>(
-          builder: (BuildContext context, value, Widget? child) {
-            if (value.isLoading) {
-              print('yea1');
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (value.error.isNotEmpty) {
-              return Center(
-                child: Text(value.error.toString()),
-              );
-            } else if (value.userModel.isNotEmpty) {
-              return Column(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 28),
-                    child: Text(
-                      'Course App',
-                      style: TextStyle(color: Color(0xff2d525d), fontSize: 28),
-                    ),
-                  ),
-                  Expanded(
-                    child: ListView.builder(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text('Course',style: TextStyle(color: Colors.black,fontSize: 20,letterSpacing: 1),),
+          elevation: 0,
+          backgroundColor: Color(0xffe9e9e9),
+        ),
+        body: RefreshIndicator(
+          onRefresh: () async => _refresh(context),
+          child: CustomScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            slivers: [
+              Consumer<CourseProvider>(
+                builder: (BuildContext context, value, Widget? child) {
+                  if (value.isLoading) {
+                    print('yea1');
+                    return SliverToBoxAdapter(
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  } else if (value.userModel.isNotEmpty) {
+                    return SliverList.builder(
                       itemCount: value.userModel.length,
                       itemBuilder: (context, index) {
                         return GestureDetector(
@@ -87,25 +91,31 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           onTap: () {
-                            GoRouter.of(context).pushNamed('Group',
-                                pathParameters: {
-                                  'id': value.userModel[index].id.toString(),
-                                  'groupName': listGroup[index]
-                                });
+                            GoRouter.of(context)
+                                .pushNamed('Group', pathParameters: {
+                              'id': value.userModel[index].id.toString(),
+                              'groupName': listGroup[index]
+                            });
                           },
                         );
                       },
+                    );
+                  }else if (value.error.isNotEmpty) {
+                    return SliverToBoxAdapter(
+                      child: Center(
+                        child: Text('Please try reloading the page'),
+                      ),
+                    );
+                  }
+                  return SliverToBoxAdapter(
+                    child: Center(
+                      child: Text('Something went wrong'),
                     ),
-                  ),
-                ],
-              );
-            }
-            return SizedBox(
-              child: Center(
-                child: Text('Something went wrong'),
+                  );
+                },
               ),
-            );
-          },
+            ],
+          ),
         ),
       ),
     );
