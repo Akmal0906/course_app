@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:course_app/presantation/view/course_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -19,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void waithfunc() {
     Timer(const Duration(seconds: 3), () {
-      GoRouter.of(context).pushNamed('Home');
+      GoRouter.of(context).pushReplacementNamed('Home');
     });
   }
 

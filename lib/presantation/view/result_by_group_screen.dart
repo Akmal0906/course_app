@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ResultGroupScreen extends StatefulWidget {
-  //final AllWorkProvider provider;
+
   final String map;
 
   const ResultGroupScreen({super.key, required this.map});
@@ -28,13 +28,14 @@ class _ResultGroupScreenState extends State<ResultGroupScreen> {
   Future _refresh(BuildContext context) async {
     res = Provider.of<AllWorkProvider>(context, listen: false)
         .getResult(widget.map);
-setState(() {
+    setState(() {
 
-});  }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    print('RESULT WIDGET BUILDING ...');
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color(0xffe9e9e9),
@@ -67,15 +68,17 @@ setState(() {
               FutureBuilder(
                   future: res,
                   builder:
-                      (BuildContext context, AsyncSnapshot<List<Result>> snapshot) {
+                      (BuildContext context,
+                      AsyncSnapshot<List<Result>> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      print('FUTUREBUILDER WAITING');
+
                       return SliverToBoxAdapter(
                         child: const Center(
                           child: CircularProgressIndicator(),
                         ),
                       );
-                    } else if (snapshot.connectionState == ConnectionState.done &&
+                    } else
+                    if (snapshot.connectionState == ConnectionState.done &&
                         snapshot.hasData) {
                       List jsonList =
                       snapshot.data!.map((e) => e.toJson()).toList();
@@ -85,56 +88,63 @@ setState(() {
                           child: DataTable(
                               headingRowColor:
                               const MaterialStatePropertyAll(Colors.blue),
-                              border: TableBorder.all(color: Colors.black, width: 2),
+                              border: TableBorder.all(
+                                  color: Colors.black, width: 2),
                               dataRowMaxHeight: 78,
                               dataRowMinHeight: 48,
                               columns: List.generate(
                                   snapshot.data!.first.tasks!.length * 3 + 5,
-                                      (index) => DataColumn(
-                                      label: Text(
-                                        listColumn[index],
-                                        style: style,
-                                      ))),
+                                      (index) =>
+                                      DataColumn(
+                                          label: Text(
+                                            listColumn[index],
+                                            style: style,
+                                          ))),
                               rows: List.generate(
                                   snapshot.data!.length,
-                                      (indexx) => DataRow(
-                                      color:
-                                      MaterialStateProperty.all(Colors.brown),
-                                      cells: [
-                                        DataCell(
-                                          Center(
-                                              child: Text(
-                                                '${indexx + 1}',
-                                                style: style.copyWith(
-                                                    fontSize: 16,
-                                                    color: Colors.white70),
-                                              )),
-                                        ),
-                                        ...List.generate(
-                                            4,
-                                                (index) => DataCell(Center(
-                                              child: Text(
-                                                jsonList[indexx]
-                                                [listRow2[index]]
-                                                    .toString(),
-                                                style: style.copyWith(
-                                                    fontSize: 16,
-                                                    color: Colors.white70),
-                                              ),
-                                            ))),
-                                        ...List.generate(
-                                          snapshot.data![indexx].tasks!.length *
-                                              3,
-                                              (index) {
-
-                                            return CellWidget(jsonList[indexx]
-                                            ['tasks']
-                                            [listCount[index]]
-                                            [listRow[index]]
-                                                .toString());
-                                          },
-                                        ),
-                                      ]))),
+                                      (indexx) =>
+                                      DataRow(
+                                          color:
+                                          MaterialStateProperty.all(
+                                              Colors.brown),
+                                          cells: [
+                                            DataCell(
+                                              Center(
+                                                  child: Text(
+                                                    '${indexx + 1}',
+                                                    style: style.copyWith(
+                                                        fontSize: 16,
+                                                        color: Colors.white70),
+                                                  )),
+                                            ),
+                                            ...List.generate(
+                                                4,
+                                                    (index) =>
+                                                    DataCell(Center(
+                                                      child: Text(
+                                                        jsonList[indexx]
+                                                        [listRow2[index]]
+                                                            .toString(),
+                                                        style: style.copyWith(
+                                                            fontSize: 16,
+                                                            color: Colors
+                                                                .white70),
+                                                      ),
+                                                    ))),
+                                            ...List.generate(
+                                              snapshot.data![indexx].tasks!
+                                                  .length *
+                                                  3,
+                                                  (index) {
+                                                return CellWidget(
+                                                    jsonList[indexx]
+                                                    ['tasks']
+                                                    [listCount[index]]
+                                                    [listRow[index]]
+                                                        .toString());
+                                              },
+                                            ),
+                                          ]))),
                         ),
                       );
                     } else if (snapshot.hasError) {

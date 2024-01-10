@@ -1,4 +1,3 @@
-import 'package:course_app/domain/models/result_group_model.dart';
 import 'package:course_app/presantation/providers/course_provider.dart';
 import 'package:course_app/presantation/view/all_homework_screen.dart';
 import 'package:course_app/presantation/view/group_screen.dart';
@@ -19,7 +18,6 @@ void main() {
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
